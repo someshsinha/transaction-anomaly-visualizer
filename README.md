@@ -1,30 +1,45 @@
 # Transaction Anomaly Visualizer (TAV)
 
-> npm-installable CLI + self-hostable dashboard for detecting anomalies in financial transaction data.
+> Distributed pipeline for detecting fraudulent patterns in financial transaction networks.  
+> Accounts and transfers are modelled as a property graph in Neo4j, enabling traversal-based 
+> detection over dynamic, high-volume data.
 
 ## ✨ Features
-- Isolation Forest-based anomaly detection (pure JS)
-- Interactive visualization dashboard
-- CLI support: `npx tav --input transactions.csv`
-- Supports CSV and JSON input
+- 4 graph algorithms implemented from scratch — DFS cycle detection, BFS velocity checking, 
+  threshold proximity analysis, timestamp delta computation
+- Neo4j property graph model for account/transfer traversal
+- BullMQ + Redis for async, non-blocking job queue processing
+- PostgreSQL for raw transaction storage
+- React dashboard visualizing flagged subgraphs and traversal paths
+- Core detection engine decoupled as a standalone npm package
+
+## 🏗️ Architecture
+CSV/JSON Input
+    → PostgreSQL (raw storage)
+    → Neo4j (graph model)
+    → BullMQ/Redis (async job queue)
+    → Graph Algorithms (anomaly detection)
+    → REST API
+    → React Dashboard
 
 ## 🚀 Quick Start
-```bash
-npm install -g transaction-anomaly-visualizer
-tav --input transactions.csv
-```
+# Prerequisites: Docker
 
-## 📦 Usage (as a library)
-```js
-const { detect } = require('transaction-anomaly-visualizer')
-const results = detect(transactions)
-```
+git clone https://github.com/<your-username>/transaction-anomaly-visualizer
+cd transaction-anomaly-visualizer
+docker compose up
+
+## 📦 Use as a standalone package
+npm install transaction-anomaly-visualizer
+
+const { detectCycles, velocityCheck } = require('transaction-anomaly-visualizer')
 
 ## 🛠️ Tech Stack
-Node.js · JavaScript · Recharts · Commander.js · Express
+Node.js · PostgreSQL · Neo4j · BullMQ · Redis · Express · React
 
 ## 📸 Demo
-_Coming soon_
+Coming soon
 
 ## 📄 License
 MIT
+
