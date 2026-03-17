@@ -1,0 +1,40 @@
+
+services:
+  # Relational Store: Source of Truth for raw transaction data
+  postgres:
+    image: postgres:15-alpine
+    container_name: tav_postgres
+    restart: always
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: tav_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  # Graph Store: For relationship traversal and anomaly detection
+  neo4j:
+    image: neo4j:5.12
+    container_name: tav_neo4j
+    restart: always
+    ports:
+      - "7474:7474" # Browser UI
+      - "7687:7687" # Bolt Protocol
+    environment:
+      NEO4J_AUTH: neo4j/password
+      NEO4J_PLUGINS: '["apoc"]' # APOC adds procedures for complex graph logic
+    volumes:
+      - neo4j_data:/data
+
+  # Message Broker: Backend for BullMQ (Async Processing)
+  redis:
+    image: redis:7-alpine
+    container_name: tav_redis
+    ports:
+      - "6379:6379"
+
+volumes:
+  pgdata:
+  neo4j_data:
