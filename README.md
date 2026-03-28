@@ -25,7 +25,7 @@ CSV/JSON Input
 ## 🚀 Quick Start
 # Prerequisites: Docker
 
-git clone https://github.com/<your-username>/transaction-anomaly-visualizer
+git clone https://github.com/someshsinha/transaction-anomaly-visualizer
 cd transaction-anomaly-visualizer
 docker compose up
 

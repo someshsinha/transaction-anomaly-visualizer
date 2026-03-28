@@ -1,0 +1,221 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=DM+Mono:ital,wght@0,300;0,400;0,500;1,400&display=swap');
+@import "tailwindcss";
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  font-size: 16px; /* Increased base font size for readability */
+
+  /* Deep sleek backgrounds for premium Dark Mode (Insomnia / Yarn inspired) */
+  --bg-app:    #09090b;   /* Very dark zinc */
+  --bg-panel:  #18181b;   /* Slightly lighter zinc */
+  --bg-card:   #27272a;
+  --bg-hover:  #3f3f46;
+  --bg-active: rgba(99, 102, 241, 0.15); /* Indigo accent bg */
+
+  /* Borders — visible, rounded */
+  --border:        #27272a;
+  --border-bright: #3f3f46;
+
+  /* Text — high contrast and legible */
+  --text-primary:   #fafafa;
+  --text-secondary: #a1a1aa;
+  --text-muted:     #71717a;
+
+  /* Accent (Insomnia/Premium vibe) */
+  --accent:    #6366f1; /* Vibrant Indigo */
+  --accent-hover:#4f46e5;
+  --accent-bg: rgba(99, 102, 241, 0.1);
+
+  /* Anomaly — Softened saturated backgrounds, white text */
+  --badge-cycle-bg:     #ef4444; /* Red */
+  --badge-velocity-bg:  #f59e0b; /* Amber */
+  --badge-struct-bg:    #8b5cf6; /* Violet */
+  --badge-rapid-bg:     #f97316; /* Orange */
+  --badge-text:         #ffffff;
+
+  /* Status */
+  --green: #10b981;
+  --red:   #ef4444;
+}
+
+.light {
+  /* Clean, airy Light Mode (Yarn inspired) */
+  --bg-app:    #f4f4f5;
+  --bg-panel:  #ffffff;
+  --bg-card:   #ffffff;
+  --bg-hover:  #f4f4f5;
+  --bg-active: #e0e7ff;
+  
+  --border:        #e4e4e7;
+  --border-bright: #d4d4d8;
+  
+  --text-primary:   #09090b;
+  --text-secondary: #52525b;
+  --text-muted:     #a1a1aa;
+  
+  --accent:    #4f46e5;
+  --accent-hover:#4338ca;
+  --accent-bg: rgba(79, 70, 229, 0.1);
+
+  --badge-cycle-bg:     #dc2626;
+  --badge-velocity-bg:  #d97706;
+  --badge-struct-bg:    #7c3aed;
+  --badge-rapid-bg:     #ea580c;
+}
+
+html, body, #root {
+  height: 100%;
+  overflow: hidden;
+}
+
+body {
+  background: var(--bg-app);
+  color: var(--text-primary);
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-size: 1rem;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar       { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border-bright); border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+
+/* Dot grid canvas */
+.canvas-bg {
+  background-color: var(--bg-app);
+  background-image: radial-gradient(circle, var(--border-bright) 1px, transparent 1px);
+  background-size: 32px 32px; /* Bigger grid */
+}
+
+/* ── Input ── */
+.tav-input {
+  background: var(--bg-card);
+  border: 1px solid var(--border-bright);
+  border-radius: 0.5rem; /* Smoother, larger radius */
+  color: var(--text-primary);
+  font-family: 'JetBrains Mono', 'DM Mono', monospace; /* Monospaced for data entry */
+  font-size: 0.95rem;
+  padding: 0 1rem;
+  height: 2.75rem; /* Much larger interactable area */
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+  width: 100%;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+}
+.light .tav-input {
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05) inset;
+}
+.tav-input:hover {
+  border-color: var(--text-muted);
+}
+.tav-input:focus {
+  background: var(--bg-panel);
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-bg);
+}
+.tav-input::placeholder { color: var(--text-muted); font-family: 'Inter', sans-serif;}
+
+/* ── Buttons ── */
+.tav-btn {
+  height: 2.75rem; /* Match input height */
+  padding: 0 1.25rem;
+  border-radius: 0.5rem;
+  border: 1px solid transparent;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+}
+.tav-btn.primary { 
+  background: var(--accent); 
+  color: #fff; 
+  border-color: var(--accent);
+  text-shadow: 0 1px 1px rgba(0,0,0,0.1);
+}
+.tav-btn.primary:hover:not(:disabled) { 
+  background: var(--accent-hover); 
+  transform: translateY(-1px);
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+.tav-btn.primary:active:not(:disabled) { 
+  transform: translateY(0);
+}
+.tav-btn.ghost { 
+  background: transparent; 
+  color: var(--text-secondary); 
+  border: 1px solid var(--border-bright);
+}
+.tav-btn.ghost:hover:not(:disabled) { 
+  background: var(--bg-hover); 
+  color: var(--text-primary); 
+  border-color: var(--text-muted);
+}
+.tav-btn:disabled { 
+  opacity: 0.5; 
+  cursor: not-allowed; 
+  box-shadow: none;
+  transform: none;
+}
+
+/* ── Anomaly badges — SOLID background, WHITE text, always readable ── */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 1.5rem;
+  padding: 0 0.6rem;
+  border-radius: 0.375rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+  flex-shrink: 0;
+  color: var(--badge-text) !important;
+  font-family: 'Inter', sans-serif;
+  text-shadow: 0 1px 1px rgba(0,0,0,0.1);
+}
+.badge-cycle     { background: var(--badge-cycle-bg);    }
+.badge-velocity  { background: var(--badge-velocity-bg); }
+.badge-structure { background: var(--badge-struct-bg);   }
+.badge-rapid     { background: var(--badge-rapid-bg);    }
+
+/* ── Divider ── */
+.vdiv {
+  width: 1px;
+  background: var(--border-bright);
+  align-self: stretch;
+  flex-shrink: 0;
+  margin: 0.5rem 0.5rem;
+}
+
+/* ── Panel header ── */
+.pane-header {
+  height: 3.5rem; /* Larger header */
+  display: flex;
+  align-items: center;
+  padding: 0 1.25rem;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-panel);
+  flex-shrink: 0;
+  gap: 1rem;
+}
+.pane-label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+}

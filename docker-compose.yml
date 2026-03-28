@@ -4,7 +4,7 @@ services:
   postgres:
     image: postgres:15-alpine
     container_name: tav_postgres
-    restart: always
+    restart: on-failure:3
     environment:
       POSTGRES_USER: user
       POSTGRES_PASSWORD: password
