@@ -1,0 +1,10 @@
+{
+  "name": "tav-detection-engine",
+  "version": "1.0.0",
+  "description": "Graph-based transaction anomaly detection. Detects cycles, velocity fraud, structuring, and automated layering.",
+  "main": "src/index.js",
+  "keywords": ["fraud-detection", "graph-algorithms", "neo4j", "fintech", "anomaly-detection", "money-laundering"],
+  "peerDependencies": {
+    "neo4j-driver": "^5.0.0"
+  }
+}

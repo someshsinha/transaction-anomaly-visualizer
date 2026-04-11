@@ -21,11 +21,11 @@ export const ControlBar = ({
     }}>
 
       <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-        <span style={{ 
-          fontSize: '0.8rem', 
+        <span style={{
+          fontSize: '0.8rem',
           fontWeight: 600,
-          color: 'var(--text-secondary)', 
-          letterSpacing: '0.1em', 
+          color: 'var(--text-secondary)',
+          letterSpacing: '0.1em',
           flexShrink: 0,
         }}>
           ACCOUNT
@@ -47,18 +47,18 @@ export const ControlBar = ({
       <div className="vdiv" style={{ margin: '0 0.5rem' }} />
 
       <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flex: 1 }}>
-        <span style={{ 
-          fontSize: '0.8rem', 
+        <span style={{
+          fontSize: '0.8rem',
           fontWeight: 600,
-          color: 'var(--text-secondary)', 
-          letterSpacing: '0.1em', 
-          flexShrink: 0, 
+          color: 'var(--text-secondary)',
+          letterSpacing: '0.1em',
+          flexShrink: 0,
         }}>
           JOB ID
         </span>
         <input
           className="tav-input"
-          style={{ width: 'clamp(12rem, 20vw, 24rem)', flex: 'none' }}
+          style={{ flex: 1, minWidth: 0, textOverflow: 'ellipsis' }}
           placeholder="e.g. batch-xyz-123"
           value={jobId}
           onChange={e => setJobId(e.target.value)}
@@ -72,11 +72,24 @@ export const ControlBar = ({
 
       <div className="vdiv" style={{ margin: '0 0.5rem' }} />
 
-      <div style={{ display: 'flex', alignItems: 'center' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
         <button className="tav-btn ghost" onClick={() => fileRef.current?.click()} disabled={ingestLoading}>
           {ingestLoading ? <Loader2 size={16} className="animate-spin" /> : <Upload size={16} />}
           Ingest CSV
         </button>
+        <a
+          href="/sample_fraud_data.csv"
+          download="sample_fraud_data.csv"
+          style={{
+            fontSize: '0.7rem', fontFamily: '"Fira Code", monospace',
+            color: 'var(--text-secondary)', textDecoration: 'underline',
+            opacity: 0.8, cursor: 'pointer'
+          }}
+          onMouseEnter={e => e.currentTarget.style.opacity = 1}
+          onMouseLeave={e => e.currentTarget.style.opacity = 0.8}
+        >
+          Sample CSV
+        </a>
         <input ref={fileRef} type="file" accept=".csv" style={{ display: 'none' }}
           onChange={e => { onIngestCSV(e.target.files[0]); e.target.value = ''; }} />
       </div>

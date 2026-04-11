@@ -50,16 +50,16 @@ export const Toolbar = ({ isDark, onToggleTheme, stats }) => (
       flexShrink: 0,
     }}>
       <div style={{
-        background: 'var(--accent-bg)',
-        padding: '0.5rem',
-        borderRadius: '0.5rem',
-        display: 'flex', alignItems: 'center', justifyContent: 'center'
+        padding: '0',
+        borderRadius: '0.4rem',
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        overflow: 'hidden', height: '28px', width: '28px'
       }}>
-        <Activity size={20} color="var(--accent)" strokeWidth={2.5} />
+        <img src="/tav-logo.png" alt="TAV Logo" style={{ width: '100%', height: '100%', objectFit: 'contain', borderRadius: '0.4rem' }} />
       </div>
       <div>
         <div style={{ fontSize: '1.1rem', fontWeight: 700, letterSpacing: '0.02em', lineHeight: 1.2 }}>TAV</div>
-        <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)', fontWeight: 500 }}>v0.1</div>
+        <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)', fontWeight: 500 }}>v1.0</div>
       </div>
     </div>
 
@@ -68,9 +68,24 @@ export const Toolbar = ({ isDark, onToggleTheme, stats }) => (
       <Stat label="Transactions" value={stats.transactions} />
       <Stat label="Anomalies"    value={stats.anomalies}
             color={stats.anomalies > 0 ? 'var(--red)' : undefined} />
-      <Stat label="Batches"  value={stats.batches} />
       <Stat label="Status"   value={stats.status ?? 'IDLE'}
             color={stats.status === 'LIVE' ? 'var(--green)' : undefined} />
+
+      {stats.batchProgress && (
+        <div style={{
+           display: 'flex', alignItems: 'center', gap: '0.75rem',
+           padding: '0 1.5rem', borderRight: '1px solid var(--border)',
+           color: 'var(--text-primary)', fontFamily: '"Fira Code", monospace',
+           fontSize: '0.85rem'
+        }}>
+           <span style={{ color: 'var(--text-secondary)', fontWeight: 600, textTransform: 'uppercase', fontSize: '0.75rem' }}>Processing</span>
+           <span style={{ color: 'var(--accent)', letterSpacing: '0.05em' }}>
+              {'█'.repeat(Math.round((stats.batchProgress.completed / stats.batchProgress.total) * 12))}
+              {'░'.repeat(12 - Math.round((stats.batchProgress.completed / stats.batchProgress.total) * 12))}
+           </span>
+           <span style={{ fontWeight: 600 }}>{stats.batchProgress.completed} / {stats.batchProgress.total} batches</span>
+        </div>
+      )}
     </div>
 
     {/* Theme toggle */}

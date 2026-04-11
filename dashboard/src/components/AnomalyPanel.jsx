@@ -1,3 +1,5 @@
+import { X } from 'lucide-react';
+
 const TYPE = {
   CYCLE:               { label: 'CYCLE',       cls: 'badge-cycle'     },
   HIGH_VELOCITY:       { label: 'VELOCITY',    cls: 'badge-velocity'  },
@@ -8,6 +10,17 @@ const TYPE = {
 const AnomalyRow = ({ anomaly, isActive, onClick }) => {
   const cfg = TYPE[anomaly.anomaly_type] || TYPE.RAPID_SUCCESSION;
   const d   = anomaly.details;
+  
+  const getSeverityColor = (type) => {
+      switch(type) {
+         case 'CYCLE': return 'var(--badge-cycle-bg)';
+         case 'HIGH_VELOCITY': return 'var(--badge-velocity-bg)';
+         case 'THRESHOLD_PROXIMITY': return 'var(--badge-struct-bg)';
+         case 'RAPID_SUCCESSION': return 'var(--badge-rapid-bg)';
+         default: return 'var(--accent)';
+      }
+  };
+  const color = getSeverityColor(anomaly.anomaly_type);
 
   const detail =
     d.from && d.to  ? `${d.from} → ${d.to}` :
@@ -31,7 +44,7 @@ const AnomalyRow = ({ anomaly, isActive, onClick }) => {
         cursor: 'pointer',
         borderBottom: '1px solid var(--border)',
         background: isActive ? 'var(--bg-active)' : 'transparent',
-        borderLeft: isActive ? '4px solid var(--accent)' : '4px solid transparent', /* Active indicator */
+        borderLeft: `4px solid ${isActive ? color : 'transparent'}`, /* Severity indicator mapped to specific alert */
         transition: 'background 0.2s, border-left-color 0.2s',
       }}
       onMouseEnter={e => { if (!isActive) e.currentTarget.style.background = 'var(--bg-hover)'; }}
@@ -47,10 +60,9 @@ const AnomalyRow = ({ anomaly, isActive, onClick }) => {
         flex: 1,
         fontSize: '0.9rem',
         color: 'var(--text-secondary)',
-        fontFamily: '"JetBrains Mono", "DM Mono", monospace',
-        overflow: 'hidden',
-        textOverflow: 'ellipsis',
-        whiteSpace: 'nowrap',
+        fontFamily: '"Fira Code", monospace',
+        wordBreak: 'break-word',
+        lineHeight: 1.4,
       }}>
         {detail}
       </span>
@@ -60,7 +72,7 @@ const AnomalyRow = ({ anomaly, isActive, onClick }) => {
         fontSize: '1rem',
         color: 'var(--text-primary)',
         fontWeight: 600,
-        fontFamily: '"JetBrains Mono", "DM Mono", monospace',
+        fontFamily: '"Fira Code", monospace',
         whiteSpace: 'nowrap',
         flexShrink: 0,
         textAlign: 'right',
@@ -72,7 +84,7 @@ const AnomalyRow = ({ anomaly, isActive, onClick }) => {
   );
 };
 
-export const AnomalyPanel = ({ data, activeAnomalyId, onSelect }) => {
+export const AnomalyPanel = ({ data, activeAnomalyId, onSelect, drawerFilterNode, onClearFilter }) => {
   if (!data) return (
     <div style={{ 
       padding: '4rem 1.5rem', 
@@ -100,8 +112,57 @@ export const AnomalyPanel = ({ data, activeAnomalyId, onSelect }) => {
     </div>
   );
 
+  const filteredAnomalies = drawerFilterNode
+     ? data.anomalies.filter(a => {
+         const d = a.details || {};
+         // Ensure deep property intersection mapping for all generated algorithms
+         const matchesDirect = 
+            d.node === drawerFilterNode ||
+            d.accountId === drawerFilterNode ||
+            d.from === drawerFilterNode ||
+            d.to === drawerFilterNode ||
+            d.fromA === drawerFilterNode ||
+            d.fromB === drawerFilterNode ||
+            d.toA === drawerFilterNode ||
+            d.toB === drawerFilterNode;
+            
+         const matchesArray = 
+            (d.cyclePath && d.cyclePath.includes(drawerFilterNode)) ||
+            (d.path && d.path.includes(drawerFilterNode)) ||
+            (d.involvedNodes && d.involvedNodes.includes(drawerFilterNode)) ||
+            (d.involvedAccounts && d.involvedAccounts.includes(drawerFilterNode));
+            
+         const stringifiedDump = JSON.stringify(d); // Final aggressive catch-all fallback
+         const matchesString = stringifiedDump.includes(drawerFilterNode);
+
+         return matchesDirect || matchesArray || matchesString;
+       })
+     : data.anomalies;
+
   return (
     <div>
+      {/* Node Filter Pill */}
+      {drawerFilterNode && (
+         <div style={{
+            padding: '0.75rem 1.25rem', background: 'var(--bg-hover)',
+            borderBottom: '1px solid var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'space-between'
+         }}>
+             <span style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
+                 Filtering by Account: <strong style={{ color: 'var(--text-primary)', fontFamily: '"Fira Code", monospace' }}>{drawerFilterNode}</strong>
+             </span>
+             <button
+                onClick={onClearFilter}
+                style={{
+                   display: 'flex', alignItems: 'center', gap: '0.25rem', background: 'var(--bg-panel)',
+                   border: '1px solid var(--border-bright)', color: 'var(--text-primary)', padding: '0.2rem 0.5rem',
+                   borderRadius: '0.25rem', fontSize: '0.75rem', cursor: 'pointer'
+                }}
+             >
+                 <X size={14} /> Clear
+             </button>
+         </div>
+      )}
+
       {/* Summary */}
       <div style={{
         display: 'flex',
@@ -114,9 +175,17 @@ export const AnomalyPanel = ({ data, activeAnomalyId, onSelect }) => {
         {Object.entries(data.byType).map(([type, items]) => {
           const cfg = TYPE[type];
           if (!cfg) return null;
+          
+          // Re-calculate local counts if filtered
+          const matchedCount = drawerFilterNode 
+               ? filteredAnomalies.filter(a => a.anomaly_type === type).length 
+               : items.length;
+               
+          if (matchedCount === 0) return null;
+
           return (
             <span key={type} className={`badge ${cfg.cls}`} style={{ opacity: 0.9 }}>
-              {items.length} {cfg.label}
+              {matchedCount} {cfg.label}
             </span>
           );
         })}
@@ -124,14 +193,20 @@ export const AnomalyPanel = ({ data, activeAnomalyId, onSelect }) => {
 
       {/* Rows */}
       <div style={{ paddingBottom: '2rem' }}>
-        {data.anomalies.map(a => (
-          <AnomalyRow
-            key={a.id}
-            anomaly={a}
-            isActive={activeAnomalyId === a.id}
-            onClick={() => onSelect(a)}
-          />
-        ))}
+        {filteredAnomalies.length === 0 ? (
+           <div style={{ padding: '2rem', textAlign: 'center', color: 'var(--text-muted)', fontSize: '0.9rem' }}>
+               No anomalies found involving this account.
+           </div>
+        ) : (
+           filteredAnomalies.map(a => (
+             <AnomalyRow
+               key={a.id}
+               anomaly={a}
+               isActive={activeAnomalyId === a.id}
+               onClick={() => onSelect(a)}
+             />
+           ))
+        )}
       </div>
     </div>
   );

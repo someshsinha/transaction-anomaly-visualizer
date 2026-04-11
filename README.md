@@ -1,45 +1,82 @@
 # Transaction Anomaly Visualizer (TAV)
 
-> Distributed pipeline for detecting fraudulent patterns in financial transaction networks.  
-> Accounts and transfers are modelled as a property graph in Neo4j, enabling traversal-based 
-> detection over dynamic, high-volume data.
+A high-performance, distributed pipeline for detecting fraudulent patterns in financial transaction networks using graph-based analysis (Neo4j), relational data (PostgreSQL), and asynchronous task queuing (BullMQ).
 
-## ✨ Features
-- 4 graph algorithms implemented from scratch — DFS cycle detection, BFS velocity checking, 
-  threshold proximity analysis, timestamp delta computation
-- Neo4j property graph model for account/transfer traversal
-- BullMQ + Redis for async, non-blocking job queue processing
-- PostgreSQL for raw transaction storage
-- React dashboard visualizing flagged subgraphs and traversal paths
-- Core detection engine decoupled as a standalone npm package
+## 🚀 Overview
 
-## 🏗️ Architecture
-CSV/JSON Input
-    → PostgreSQL (raw storage)
-    → Neo4j (graph model)
-    → BullMQ/Redis (async job queue)
-    → Graph Algorithms (anomaly detection)
-    → REST API
-    → React Dashboard
+TAV is designed to ingest massive transaction datasets and autonomously flag suspicious activity. It uses a **Polyglot Persistence** architecture, leveraging the strengths of both relational and graph databases to provide a comprehensive view of financial networks.
 
-## 🚀 Quick Start
-# Prerequisites: Docker
+### 🏗️ Architecture
 
-git clone https://github.com/someshsinha/transaction-anomaly-visualizer
-cd transaction-anomaly-visualizer
-docker compose up
+```mermaid
+flowchart TD
+    A[React Dashboard] -->|Ingest CSV/JSON| B(Express API)
+    B -->|Raw Logs| C[(PostgreSQL)]
+    B -->|Graph Relations| D[(Neo4j)]
+    B -->|Queue Job| E((BullMQ / Redis))
+    E --> F[Detection Engine]
+    F -->|Flag Anomalies| G[PostgreSQL Anomalies Table]
+    G -.->|Poll/View| A
+```
 
-## 📦 Use as a standalone package
-npm install transaction-anomaly-visualizer
+---
 
-const { detectCycles, velocityCheck } = require('transaction-anomaly-visualizer')
+## 🔍 Detection Algorithms
 
-## 🛠️ Tech Stack
-Node.js · PostgreSQL · Neo4j · BullMQ · Redis · Express · React
+The system runs four core heuristic algorithms on every ingested batch:
 
-## 📸 Demo
-Coming soon
+1.  **DFS Cycle Detection:** Identifies "Money Flow Obfuscation" where funds are routed through multiple accounts (A → B → C → A) to hide their origin.
+2.  **BFS Velocity Check:** Detects "Rapid Draining" where an account performs an abnormal number of transactions (e.g., 10+ actions) within a 60-minute window.
+3.  **Threshold Proximity:** Flags "Structuring" or "Smurfing"—transactions clustered just below legal reporting limits (e.g., $9,500–$9,999).
+4.  **Timestamp Delta:** Identifies automated bot-net activity where transactions occur with sub-60-second precision.
+
+---
+
+## 🛠️ Setup & Installation
+
+### 1. Prerequisites
+- Docker & Docker Compose
+- Node.js (v18+)
+- npm
+
+### 2. Infrastructure
+Bring up the backing stores (Postgres, Neo4j, and Redis):
+```bash
+docker-compose up -d
+```
+
+### 3. Local Development
+Install dependencies and start the services concurrently:
+```bash
+# From the root directory
+npm install
+npm run dev
+```
+- **Dashboard:** [http://localhost:5173](http://localhost:5173)
+- **API Backend:** [http://localhost:3000](http://localhost:3000)
+
+---
+
+## 📊 Demo: PaySim Stress Test
+
+To see the system in action with real-world scale data:
+
+1.  Open the **Dashboard**.
+2.  Use the **Ingest Panel** on the left.
+3.  Upload the provided `paysim_stress_50k.csv` file.
+4.  The system will enqueue multiple batches. Watch the **Anomaly Feed** on the right populate as the detection engine flags transactions.
+5.  Click on any flagged account to visualize its **2-hop subgraph** in the main canvas.
+
+---
+
+## 📦 Tech Stack
+
+- **Frontend:** React, Vite, TailwindCSS, Cytoscape.js (Graph Visualization).
+- **Backend:** Node.js, Express, BullMQ (Queue Management).
+- **Databases:** PostgreSQL (Relational), Neo4j (Graph), Redis (Job Queue).
+- **Engine:** Standalone NPM package `tav-detection-engine` for portable fraud logic.
+
+---
 
 ## 📄 License
-MIT
-
+Distributed under the MIT License. See `LICENSE` for more information.

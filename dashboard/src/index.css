@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=DM+Mono:ital,wght@0,300;0,400;0,500;1,400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Fira+Code:wght@400;500;600&display=swap');
 @import "tailwindcss";
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -41,18 +41,18 @@
 
 .light {
   /* Clean, airy Light Mode (Yarn inspired) */
-  --bg-app:    #f4f4f5;
+  --bg-app:    #e2e8f0;
   --bg-panel:  #ffffff;
   --bg-card:   #ffffff;
-  --bg-hover:  #f4f4f5;
+  --bg-hover:  #f1f5f9;
   --bg-active: #e0e7ff;
   
-  --border:        #e4e4e7;
-  --border-bright: #d4d4d8;
+  --border:        #cbd5e1;
+  --border-bright: #94a3b8;
   
-  --text-primary:   #09090b;
-  --text-secondary: #52525b;
-  --text-muted:     #a1a1aa;
+  --text-primary:   #0f172a;
+  --text-secondary: #334155;
+  --text-muted:     #64748b;
   
   --accent:    #4f46e5;
   --accent-hover:#4338ca;
@@ -72,7 +72,8 @@ html, body, #root {
 body {
   background: var(--bg-app);
   color: var(--text-primary);
-  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-family: 'Outfit', system-ui, -apple-system, sans-serif;
+  letter-spacing: 0.015em;
   font-size: 1rem;
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
@@ -98,7 +99,7 @@ body {
   border: 1px solid var(--border-bright);
   border-radius: 0.5rem; /* Smoother, larger radius */
   color: var(--text-primary);
-  font-family: 'JetBrains Mono', 'DM Mono', monospace; /* Monospaced for data entry */
+  font-family: 'Fira Code', monospace; /* Monospaced for data entry */
   font-size: 0.95rem;
   padding: 0 1rem;
   height: 2.75rem; /* Much larger interactable area */
@@ -118,7 +119,7 @@ body {
   border-color: var(--accent);
   box-shadow: 0 0 0 3px var(--accent-bg);
 }
-.tav-input::placeholder { color: var(--text-muted); font-family: 'Inter', sans-serif;}
+.tav-input::placeholder { color: var(--text-muted); font-family: 'Outfit', sans-serif;}
 
 /* ── Buttons ── */
 .tav-btn {
@@ -126,7 +127,7 @@ body {
   padding: 0 1.25rem;
   border-radius: 0.5rem;
   border: 1px solid transparent;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Outfit', sans-serif;
   font-size: 0.95rem;
   font-weight: 500;
   cursor: pointer;
@@ -184,7 +185,7 @@ body {
   white-space: nowrap;
   flex-shrink: 0;
   color: var(--badge-text) !important;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Outfit', sans-serif;
   text-shadow: 0 1px 1px rgba(0,0,0,0.1);
 }
 .badge-cycle     { background: var(--badge-cycle-bg);    }

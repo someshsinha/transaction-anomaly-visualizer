@@ -39,6 +39,19 @@ export const IngestForm = ({ onIngest, loading, isDark }) => {
         {loading ? 'Ingesting...' : 'Drop CSV or click to upload'}
         <input ref={fileRef} type="file" accept=".csv" className="hidden" onChange={e => handleFile(e.target.files[0])} />
       </div>
+
+      <div className="text-center">
+        <a
+          href="/sample_fraud_data.csv"
+          download="sample_fraud_data.csv"
+          className={clsx(
+            'font-mono text-[10px] opacity-60 hover:opacity-100 transition-opacity',
+            isDark ? 'text-slate-400' : 'text-slate-500'
+          )}
+        >
+          Download Sample CSV
+        </a>
+      </div>
     </div>
   );
 };

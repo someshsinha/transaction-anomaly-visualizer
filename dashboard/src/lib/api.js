@@ -28,5 +28,7 @@ export const api = {
 
   getAnomalies: (jobId) => req(`/api/analyze/${jobId}`),
 
+  getStatus: () => req('/api/analyze/status'),
+
   getGraph: (accountId) => req(`/api/graph/${accountId}`),
 };
