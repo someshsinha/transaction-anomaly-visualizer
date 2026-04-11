@@ -196,7 +196,15 @@ const getStylesheet = (isDark, labelMode) => [
 
 export const GraphCanvas = ({ graphData, anomalies, highlightIds, isDark, onEdgeSelect, onNodeSelect, onNodeExpand }) => {
   const cyRef = useRef(null);
+  const renderStartTimeRef = useRef(null);
   const originalToBundledRef = useRef(new Map());
+
+  // Start timer when data changes
+  useEffect(() => {
+    if (graphData) {
+      renderStartTimeRef.current = performance.now();
+    }
+  }, [graphData, anomalies]);
 
   const [minAmount, setMinAmount] = useState(0);
   const [debouncedMinAmount, setDebouncedMinAmount] = useState(0);
@@ -423,9 +431,17 @@ export const GraphCanvas = ({ graphData, anomalies, highlightIds, isDark, onEdge
         cy={cy => {
           cyRef.current = cy;
           // One-time fit on load if needed, though layout handles it
-          cy.on('layoutstart', () => setIsLoadingLayout(true));
+          cy.on('layoutstart', () => {
+             setIsLoadingLayout(true);
+             if (!renderStartTimeRef.current) renderStartTimeRef.current = performance.now();
+          });
           cy.on('layoutstop', () => {
              setIsLoadingLayout(false);
+             if (renderStartTimeRef.current) {
+                const duration = performance.now() - renderStartTimeRef.current;
+                console.log(`📊 Graph Render Latency: ${Math.round(duration)}ms`);
+                renderStartTimeRef.current = null;
+             }
              if (!highlightIds?.length) cy.fit(cy.elements(), 60);
           });
           

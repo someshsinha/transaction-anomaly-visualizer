@@ -6,6 +6,8 @@ A high-performance, distributed pipeline for detecting fraudulent patterns in fi
 
 TAV is designed to ingest massive transaction datasets and autonomously flag suspicious activity. It uses a **Polyglot Persistence** architecture, leveraging the strengths of both relational and graph databases to provide a comprehensive view of financial networks.
 
+![TAV Dashboard Demo](./sample2.png)
+
 ### 🏗️ Architecture
 
 ```mermaid
@@ -42,7 +44,7 @@ The system runs four core heuristic algorithms on every ingested batch:
 ### 2. Infrastructure
 Bring up the backing stores (Postgres, Neo4j, and Redis):
 ```bash
-docker-compose up -d
+docker-compose up -d postgres neo4j redis
 ```
 
 ### 3. Local Development

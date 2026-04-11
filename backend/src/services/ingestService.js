@@ -161,6 +161,7 @@ const insertIntoNeo4j = async (rows) => {
 
 // ── Main service function ─────────────────────────────────────────
 const ingestAndEnqueue = async (body, file = null) => {
+  const ingestStart = Date.now();
   const csvString = file ? file.buffer.toString('utf8') : null;
   const rows      = parseInput(body, csvString);
 
@@ -175,18 +176,23 @@ const ingestAndEnqueue = async (body, file = null) => {
   ]);
 
   const BATCH_SIZE = 500;
-  const timestamp  = Date.now();
   let   batchNum   = 0;
   const jobIds     = [];
 
   for (let i = 0; i < rows.length; i += BATCH_SIZE) {
     const batch    = rows.slice(i, i + BATCH_SIZE);
     const subgraph = rowsToSubgraph(batch);
-    const batchId  = `batch-${timestamp}-${batchNum}`;
+    const batchId  = `batch-${ingestStart}-${batchNum}`;
 
     await analysisQueue.add(
       'analyze-subgraph',
-      { batchId, ...subgraph },
+      { 
+        batchId, 
+        ingestStart, 
+        totalRows: rows.length,
+        isLastBatch: (i + BATCH_SIZE >= rows.length),
+        ...subgraph 
+      },
       {
         attempts:         3,
         backoff:          { type: 'exponential', delay: 1000 },
@@ -204,6 +210,8 @@ const ingestAndEnqueue = async (body, file = null) => {
     allJobIds:       jobIds,
     rowCount:        rows.length,
     enqueuedBatches: batchNum,
+    ingestStart,
+    ingestLatency:   Date.now() - ingestStart
   };
 };
 

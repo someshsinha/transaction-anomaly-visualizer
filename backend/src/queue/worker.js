@@ -35,7 +35,7 @@ const persistAnomalies = async (batchId, anomalies) => {
 const worker = new Worker(
   'tav-analysis',
   async (job) => {
-    const { batchId, nodes, edges } = job.data;
+    const { batchId, nodes, edges, ingestStart, totalRows, isLastBatch } = job.data;
     console.log(`⚙️  Processing ${batchId} — ${nodes.length} nodes, ${edges.length} edges`);
 
     const anomalies = engine.analyzeGraph(nodes, edges);
@@ -45,6 +45,22 @@ const worker = new Worker(
       console.log(`🚨 ${batchId}: ${anomalies.length} anomalies written to PostgreSQL`);
     } else {
       console.log(`✅ ${batchId}: clean — no anomalies`);
+    }
+
+    // Metrics calculation
+    if (ingestStart) {
+      const now = Date.now();
+      const durationMs = now - ingestStart;
+      const durationSec = durationMs / 1000;
+      const throughput = Math.round(totalRows / durationSec);
+      
+      console.log(`📊 Metrics [${batchId}]:`);
+      console.log(`   - Pipeline Latency: ${durationMs}ms`);
+      console.log(`   - Current Throughput: ${throughput} tx/sec`);
+      
+      if (isLastBatch) {
+        console.log(`🏁 FINAL BATCH REACHED for ingest starting at ${ingestStart}`);
+      }
     }
 
     return { batchId, anomalyCount: anomalies.length };
