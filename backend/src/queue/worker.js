@@ -7,7 +7,10 @@ const { redisConfig } = require('../config/redis');
 const { TAVEngine } = require('tav-detection-engine');
 const pool = require('../db/postgres');
 
-const engine = new TAVEngine();
+const engine = new TAVEngine({
+  velocityThreshold: 20,
+  proximityPercent: 0.01
+});
 
 /**
  * Inserts a batch of anomalies into the anomalies table.

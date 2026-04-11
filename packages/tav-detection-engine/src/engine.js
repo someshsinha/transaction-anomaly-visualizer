@@ -6,10 +6,10 @@ const { checkTimestampDelta } = require('./algorithms/timestampDelta');
 class TAVEngine {
   constructor(config = {}) {
     this.config = {
-      velocityThreshold: config.velocityThreshold || 10,
+      velocityThreshold: config.velocityThreshold || 20,
       velocityWindowMs: config.velocityWindowMs || 3600000,
       reportingLimit: config.reportingLimit || 10000,
-      proximityPercent: config.proximityPercent || 0.15,
+      proximityPercent: config.proximityPercent || 0.01,
       timestampDeltaMs: config.timestampDeltaMs || 60000,
       neo4jUri: config.neo4jUri || null, // placeholder if graph builder is needed
       neo4jUser: config.neo4jUser || null,
