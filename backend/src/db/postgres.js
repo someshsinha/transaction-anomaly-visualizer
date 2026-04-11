@@ -1,22 +1,25 @@
 const { Pool } = require('pg');
+
+// Priority 1: Check process.env directly (Render injection)
+// Priority 2: Try to load from .env file
 require('dotenv').config();
 
-const pgUri = process.env.PG_URI;
+const pgUri = process.env.PG_URI || process.env.DATABASE_URL;
 
 if (pgUri) {
-  console.log('✅ Postgres: PG_URI detected');
+  console.log('✅ Postgres: Detected connection string');
 } else {
-  console.warn('⚠️  Postgres: PG_URI is missing, falling back to localhost:5432');
+  console.warn('⚠️  Postgres: No connection string found. Defaulting to localhost:5432');
 }
 
-// Create a pool instance using the URI from your .env
 const poolOptions = {
   connectionString: pgUri,
 };
 
-if (pgUri) {
+// Only enable SSL if we are connecting to a remote host (Neon/Render)
+if (pgUri && (pgUri.includes('neon.tech') || pgUri.includes('render.com') || pgUri.includes('aws.com'))) {
   poolOptions.ssl = {
-    rejectUnauthorized: false, // Required for Neon
+    rejectUnauthorized: false,
   };
 }
 
