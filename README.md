@@ -9,7 +9,7 @@
 
 ---
 
-## 🚀 Deployment & Live Access
+## 🚀 Live Access
 
 ### **[👉 View Live Dashboard](https://transaction-anomaly-visualizer-dash.vercel.app/)**
 
@@ -17,47 +17,40 @@
 
 ---
 
-## 🏗️ Deployment Architecture
-
-TAV is built with a modern, cloud-native architecture distributed across specialized managed services for maximum reliability and performance:
-
-- **Frontend:** Hosted on **Vercel** for edge-optimized delivery and instant React rendering.
-- **Backend API & Worker:** Deployed on **Render** (Web Service + Background Worker) using a custom monorepo Docker build.
-- **Relational Store:** **Neon (PostgreSQL)** serves as the source of truth for raw transaction logs and detected anomaly metadata.
-- **Graph Store:** **Neo4j Aura** provides a managed graph environment for high-speed relationship traversal.
-- **Message Broker:** **Upstash (Redis)** handles asynchronous job queuing via BullMQ, ensuring the ingestion pipeline never blocks the UI.
-
----
-
-## 🛠️ Tech Stack & Diagram
+## 🏗️ System Architecture
 
 The system is built as a robust monorepo, separating core logic into a portable detection engine.
 
 ```mermaid
 flowchart TD
-    subgraph Client [Vercel]
-        A[React Dashboard]
-    end
+    A[React Dashboard] -->|Ingest CSV/JSON| B(Express API)
+    B -->|Raw Logs| C[(PostgreSQL)]
+    B -->|Graph Relations| D[(Neo4j)]
+    B -->|Queue Job| E((BullMQ / Redis))
+    E --> F[Detection Engine]
+    F -->|Flag Anomalies| G[PostgreSQL Anomalies Table]
+    G -.->|Poll/View| A
+```
 
-    subgraph Compute [Render]
-        B[Express API]
-        E[BullMQ Worker]
-    end
+---
 
-    subgraph Storage [Managed DBs]
-        C[(Neon Postgres)]
-        D[(Neo4j Aura)]
-        F[(Upstash Redis)]
-    end
+## 🌐 Cloud Infrastructure
 
-    A -->|Ingest| B
-    B -->|Relational Data| C
-    B -->|Graph Data| D
-    B -->|Enqueue| F
-    F -->|Process| E
-    E -->|Analyze| D
-    E -->|Store Result| C
-    C -.->|Poll Anomalies| A
+TAV is distributed across specialized managed services to ensure scalability and ease of deployment:
+
+- **Frontend:** Hosted on **Vercel**.
+- **Compute:** **Render** (Web Service for API + Background Worker for Analysis).
+- **Databases:** **Neon** (Postgres), **Neo4j Aura** (Graph), and **Upstash** (Redis).
+
+```mermaid
+graph LR
+    V[Vercel] --> R[Render API]
+    R --> Neon[(Neon Postgres)]
+    R --> Aura[(Neo4j Aura)]
+    R --> Upstash[(Upstash Redis)]
+    Upstash --> RW[Render Worker]
+    RW --> Neon
+    RW --> Aura
 ```
 
 ---
