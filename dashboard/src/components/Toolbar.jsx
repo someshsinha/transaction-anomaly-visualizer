@@ -96,7 +96,7 @@ export const Toolbar = ({ isDark, onToggleTheme, stats }) => (
       flexShrink: 0,
     }}>
       <button className="tav-btn ghost" onClick={onToggleTheme}>
-        {isDark ? <Sun size={18} /> : <Moon size={18} />}
+        {isDark ? <Sun size={20} /> : <Moon size={20} />}
         {isDark ? 'Light' : 'Dark'}
       </button>
     </div>

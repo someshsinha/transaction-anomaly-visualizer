@@ -168,7 +168,7 @@ export const Dashboard = () => {
               onClick={() => setToastError(null)} 
               style={{ background: 'transparent', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', padding: '0.2rem' }}
             >
-              <X size={16}/>
+              <X size={20}/>
             </button>
           </div>
           <div style={{ 
@@ -236,7 +236,7 @@ export const Dashboard = () => {
                   borderRadius: '0.5rem', cursor: 'pointer', boxShadow: '0 8px 32px rgba(0,0,0,0.15)'
                 }}
               >
-                {isFullscreen ? <><Minimize size={16} /><span>Exit (Esc)</span></> : <><Maximize size={16} /><span>Fullscreen</span></>}
+                {isFullscreen ? <><Minimize size={20} /><span>Exit (Esc)</span></> : <><Maximize size={20} /><span>Fullscreen</span></>}
               </button>
               <button
                 onClick={() => setIsDrawerOpen(!isDrawerOpen)} style={{
@@ -251,7 +251,7 @@ export const Dashboard = () => {
                   borderRadius: '0.5rem', cursor: 'pointer', boxShadow: '0 8px 32px rgba(0,0,0,0.15)'
                 }}
               >
-                {isDrawerOpen ? <PanelRightClose size={18} /> : <PanelRightOpen size={18} />}
+                {isDrawerOpen ? <PanelRightClose size={20} /> : <PanelRightOpen size={20} />}
               </button>
             </div>
 
@@ -308,7 +308,7 @@ export const Dashboard = () => {
                       }}
                       title="Export to CSV"
                     >
-                      <Download size={14} /> Export
+                      <Download size={20} /> Export
                     </button>
                   )}
                   <button
@@ -319,7 +319,7 @@ export const Dashboard = () => {
                     }}
                     title="Close Panel"
                   >
-                    <X size={18} />
+                    <X size={20} />
                   </button>
                 </div>
               </div>

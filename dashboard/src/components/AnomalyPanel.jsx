@@ -11,6 +11,12 @@ const AnomalyRow = ({ anomaly, isActive, onClick }) => {
   const cfg = TYPE[anomaly.anomaly_type] || TYPE.RAPID_SUCCESSION;
   const d   = anomaly.details;
   
+  // Calculate impact based on nodes in cycle or transfer count
+  const impact = anomaly.anomaly_type === 'CYCLE' 
+    ? (d.cyclePath?.length || 0) * 10 
+    : (d.transferCount || 0);
+  const isHighImpact = impact >= 20;
+
   const getSeverityColor = (type) => {
       switch(type) {
          case 'CYCLE': return 'var(--badge-cycle-bg)';
@@ -39,20 +45,25 @@ const AnomalyRow = ({ anomaly, isActive, onClick }) => {
         display: 'flex',
         alignItems: 'center',
         gap: '1rem',
-        padding: '0 1.25rem',
-        height: '4rem', /* Taller row for better hit area and readability */
+        padding: '0.75rem 1.25rem',
+        minHeight: '4.5rem',
         cursor: 'pointer',
         borderBottom: '1px solid var(--border)',
         background: isActive ? 'var(--bg-active)' : 'transparent',
-        borderLeft: `4px solid ${isActive ? color : 'transparent'}`, /* Severity indicator mapped to specific alert */
+        borderLeft: `4px solid ${isActive ? color : (isHighImpact ? '#ea580c' : 'transparent')}`,
         transition: 'background 0.2s, border-left-color 0.2s',
       }}
       onMouseEnter={e => { if (!isActive) e.currentTarget.style.background = 'var(--bg-hover)'; }}
       onMouseLeave={e => { if (!isActive) e.currentTarget.style.background = 'transparent'; }}
     >
-      {/* Badge container with fixed width to align text */}
-      <div style={{ width: '6.5rem', flexShrink: 0 }}>
+      {/* Badge container */}
+      <div style={{ width: '6.5rem', flexShrink: 0, display: 'flex', flexDirection: 'column', gap: '4px' }}>
         <span className={`badge ${cfg.cls}`}>{cfg.label}</span>
+        {isHighImpact && (
+          <span style={{ fontSize: '7px', fontWeight: 800, color: '#ea580c', letterSpacing: '0.05em' }}>
+            HIGH IMPACT
+          </span>
+        )}
       </div>
 
       {/* Detail */}
@@ -76,7 +87,7 @@ const AnomalyRow = ({ anomaly, isActive, onClick }) => {
         whiteSpace: 'nowrap',
         flexShrink: 0,
         textAlign: 'right',
-        minWidth: '5rem', /* Ensure consistent right alignment */
+        minWidth: '5rem',
       }}>
         {value}
       </span>
@@ -115,29 +126,29 @@ export const AnomalyPanel = ({ data, activeAnomalyId, onSelect, drawerFilterNode
   const filteredAnomalies = drawerFilterNode
      ? data.anomalies.filter(a => {
          const d = a.details || {};
-         // Ensure deep property intersection mapping for all generated algorithms
          const matchesDirect = 
             d.node === drawerFilterNode ||
             d.accountId === drawerFilterNode ||
             d.from === drawerFilterNode ||
-            d.to === drawerFilterNode ||
-            d.fromA === drawerFilterNode ||
-            d.fromB === drawerFilterNode ||
-            d.toA === drawerFilterNode ||
-            d.toB === drawerFilterNode;
+            d.to === drawerFilterNode;
             
          const matchesArray = 
             (d.cyclePath && d.cyclePath.includes(drawerFilterNode)) ||
-            (d.path && d.path.includes(drawerFilterNode)) ||
-            (d.involvedNodes && d.involvedNodes.includes(drawerFilterNode)) ||
-            (d.involvedAccounts && d.involvedAccounts.includes(drawerFilterNode));
+            (d.path && d.path.includes(drawerFilterNode));
             
-         const stringifiedDump = JSON.stringify(d); // Final aggressive catch-all fallback
+         const stringifiedDump = JSON.stringify(d);
          const matchesString = stringifiedDump.includes(drawerFilterNode);
 
          return matchesDirect || matchesArray || matchesString;
        })
      : data.anomalies;
+
+  // Sort by impact
+  const sortedAnomalies = [...filteredAnomalies].sort((a, b) => {
+    const scoreA = a.anomaly_type === 'CYCLE' ? (a.details?.cyclePath?.length || 0) * 10 : (a.details?.transferCount || 0);
+    const scoreB = b.anomaly_type === 'CYCLE' ? (b.details?.cyclePath?.length || 0) * 10 : (b.details?.transferCount || 0);
+    return scoreB - scoreA;
+  });
 
   return (
     <div>
@@ -175,14 +186,10 @@ export const AnomalyPanel = ({ data, activeAnomalyId, onSelect, drawerFilterNode
         {Object.entries(data.byType).map(([type, items]) => {
           const cfg = TYPE[type];
           if (!cfg) return null;
-          
-          // Re-calculate local counts if filtered
           const matchedCount = drawerFilterNode 
                ? filteredAnomalies.filter(a => a.anomaly_type === type).length 
                : items.length;
-               
           if (matchedCount === 0) return null;
-
           return (
             <span key={type} className={`badge ${cfg.cls}`} style={{ opacity: 0.9 }}>
               {matchedCount} {cfg.label}
@@ -193,12 +200,12 @@ export const AnomalyPanel = ({ data, activeAnomalyId, onSelect, drawerFilterNode
 
       {/* Rows */}
       <div style={{ paddingBottom: '2rem' }}>
-        {filteredAnomalies.length === 0 ? (
+        {sortedAnomalies.length === 0 ? (
            <div style={{ padding: '2rem', textAlign: 'center', color: 'var(--text-muted)', fontSize: '0.9rem' }}>
                No anomalies found involving this account.
            </div>
         ) : (
-           filteredAnomalies.map(a => (
+           sortedAnomalies.map(a => (
              <AnomalyRow
                key={a.id}
                anomaly={a}

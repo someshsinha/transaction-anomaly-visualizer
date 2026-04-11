@@ -10,7 +10,7 @@ export const ControlBar = ({
 
   return (
     <div style={{
-      height: '4.5rem', /* Taller control bar */
+      height: '4.5rem',
       background: 'var(--bg-panel)',
       borderBottom: '1px solid var(--border)',
       display: 'flex',
@@ -39,7 +39,7 @@ export const ControlBar = ({
           onKeyDown={e => e.key === 'Enter' && onFetchGraph()}
         />
         <button className="tav-btn primary" onClick={onFetchGraph} disabled={graphLoading || !accountId}>
-          {graphLoading ? <Loader2 size={16} className="animate-spin" /> : <Search size={16} />}
+          {graphLoading ? <Loader2 size={20} className="animate-spin" /> : <Search size={20} />}
           Graph
         </button>
       </div>
@@ -61,11 +61,12 @@ export const ControlBar = ({
           style={{ flex: 1, minWidth: 0, textOverflow: 'ellipsis' }}
           placeholder="e.g. batch-xyz-123"
           value={jobId}
+          autoComplete="off"
           onChange={e => setJobId(e.target.value)}
           onKeyDown={e => e.key === 'Enter' && onFetchAnomalies()}
         />
         <button className="tav-btn primary" onClick={onFetchAnomalies} disabled={anomalyLoading || !jobId}>
-          {anomalyLoading ? <Loader2 size={16} className="animate-spin" /> : <Search size={16} />}
+          {anomalyLoading ? <Loader2 size={20} className="animate-spin" /> : <Search size={20} />}
           Analyze
         </button>
       </div>
@@ -74,7 +75,7 @@ export const ControlBar = ({
 
       <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
         <button className="tav-btn ghost" onClick={() => fileRef.current?.click()} disabled={ingestLoading}>
-          {ingestLoading ? <Loader2 size={16} className="animate-spin" /> : <Upload size={16} />}
+          {ingestLoading ? <Loader2 size={20} className="animate-spin" /> : <Upload size={20} />}
           Ingest CSV
         </button>
         <a
