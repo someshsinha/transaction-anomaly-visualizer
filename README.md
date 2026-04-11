@@ -34,9 +34,9 @@ flowchart TD
 
 ---
 
-## 🌐 Cloud Infrastructure
+## 🌐 Cloud Infrastructure & Data Flow
 
-The application is distributed across specialized managed services for optimal performance and scalability:
+TAV is distributed across specialized managed services for optimal performance and scalability:
 
 ```mermaid
 flowchart LR
@@ -52,15 +52,16 @@ flowchart LR
         U[(Upstash Redis)]
     end
 
-    V --> B
-    B --> N
-    B --> A
-    B --> U
+    V -->|REST API / JSON| B
+    B -->|Relational Storage| N
+    B -->|Graph Relations| A
+    B -->|Task Queuing| U
 ```
 
-- **Frontend:** Hosted on **Vercel**.
-- **Backend:** Deployed on **Render** (API + Background Worker).
-- **Data Layers:** **Neon** (Postgres), **Neo4j Aura** (Graph), and **Upstash** (Redis).
+### **Challenges Overcome**
+- **Monorepo Docker Orchestration**: Engineered a specialized Docker build process from the repository root to correctly resolve and bundle local workspace dependencies (`tav-detection-engine`) during deployment.
+- **Cross-Provider Security**: Configured and optimized SSL/TLS handshaking across three distinct managed providers (Neon, Aura, and Upstash) to ensure secure data transit in a distributed environment.
+- **Multi-Database State Synchronization**: Orchestrated complex state management across relational (PostgreSQL) and graph (Neo4j) models to maintain data integrity and consistency during high-throughput ingestion.
 
 ---
 
