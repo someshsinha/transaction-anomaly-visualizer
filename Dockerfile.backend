@@ -1,0 +1,30 @@
+# Use an official Node.js runtime as the base image
+FROM node:20-alpine AS builder
+
+# Set the working directory in the container
+WORKDIR /app
+
+# 1. Copy root workspace configurations
+COPY package.json package-lock.json ./
+
+# 2. Copy the package.json files for the backend and the local detection engine
+# This allows us to install dependencies before copying the full source code (better caching)
+COPY backend/package.json ./backend/
+COPY packages/tav-detection-engine/package.json ./packages/tav-detection-engine/
+
+# 3. Install only the production dependencies for the backend workspace
+# Note: npm ci --workspace=tav-backend will resolve the local 'tav-detection-engine' automatically
+RUN npm ci --workspace=tav-backend --include-workspace-root --omit=dev
+
+# 4. Copy the source code for the engine and the backend
+COPY packages/tav-detection-engine/src ./packages/tav-detection-engine/src
+COPY backend/src ./backend/src
+
+# 5. Build Stage finished. Now prepare the runtime.
+EXPOSE 3000
+
+# Set the working directory to the backend folder for the CMD
+WORKDIR /app/backend
+
+# Default command to start the server
+CMD ["node", "src/server.js"]
