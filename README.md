@@ -11,9 +11,9 @@
 
 ## 🚀 Live Access
 
-### **[👉 View Live Dashboard](https://transaction-anomaly-visualizer-dash.vercel.app/)**
+**[👉 View Live Dashboard](https://transaction-anomaly-visualizer-dash.vercel.app/)**
 
-> **⚠️ Note on "Cold Starts":** This project is hosted on Render's free tier. If the dashboard feels unresponsive initially, please allow **30–50 seconds** for the backend services to "wake up" from their dormant state. Once active, the pipeline operates at full speed.
+> **Note:** This project uses Render's free tier. The first request may take **30–50 seconds** to complete as the backend services wake up.
 
 ---
 
@@ -36,22 +36,31 @@ flowchart TD
 
 ## 🌐 Cloud Infrastructure
 
-TAV is distributed across specialized managed services to ensure scalability and ease of deployment:
-
-- **Frontend:** Hosted on **Vercel**.
-- **Compute:** **Render** (Web Service for API + Background Worker for Analysis).
-- **Databases:** **Neon** (Postgres), **Neo4j Aura** (Graph), and **Upstash** (Redis).
+The application is distributed across specialized managed services for optimal performance and scalability:
 
 ```mermaid
-graph LR
-    V[Vercel] --> R[Render API]
-    R --> Neon[(Neon Postgres)]
-    R --> Aura[(Neo4j Aura)]
-    R --> Upstash[(Upstash Redis)]
-    Upstash --> RW[Render Worker]
-    RW --> Neon
-    RW --> Aura
+flowchart LR
+    subgraph Client [Public]
+        V[Vercel Frontend]
+    end
+    subgraph Compute [Render]
+        B[Backend Services]
+    end
+    subgraph Storage [Managed DBs]
+        N[(Neon Postgres)]
+        A[(Neo4j Aura)]
+        U[(Upstash Redis)]
+    end
+
+    V --> B
+    B --> N
+    B --> A
+    B --> U
 ```
+
+- **Frontend:** Hosted on **Vercel**.
+- **Backend:** Deployed on **Render** (API + Background Worker).
+- **Data Layers:** **Neon** (Postgres), **Neo4j Aura** (Graph), and **Upstash** (Redis).
 
 ---
 
@@ -84,7 +93,7 @@ Instantly visualize the 2-hop network of any account to understand its relations
 
 ### **1. Prerequisites**
 - **Node.js** (v20+)
-- **Docker & Docker Compose** (for local development)
+- **Docker & Docker Compose** (for local infrastructure)
 
 ### **2. Infrastructure Setup**
 Bring up the PostgreSQL, Neo4j, and Redis containers:
