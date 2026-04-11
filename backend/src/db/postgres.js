@@ -4,6 +4,9 @@ require('dotenv').config();
 // Create a pool instance using the URI from your .env
 const pool = new Pool({
   connectionString: process.env.PG_URI,
+  ssl: {
+    rejectUnauthorized: false, // Required for Neon
+  },
 });
 
 // Verification logic for your terminal

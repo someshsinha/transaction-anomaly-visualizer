@@ -1,12 +1,15 @@
 // src/config/redis.js
 // Centralised Redis connection config for BullMQ.
-// BullMQ needs { host, port } — it does NOT accept a connection string URI.
 
 require('dotenv').config();
 
-const redisConfig = {
-  host: process.env.REDIS_HOST || 'localhost',
-  port: parseInt(process.env.REDIS_PORT || '6379', 10),
-};
+// Use REDIS_URL if available (preferred for managed services like Upstash)
+// Otherwise fallback to host/port
+const redisConfig = process.env.REDIS_URL 
+  ? process.env.REDIS_URL
+  : {
+      host: process.env.REDIS_HOST || 'localhost',
+      port: parseInt(process.env.REDIS_PORT || '6379', 10),
+    };
 
 module.exports = { redisConfig };

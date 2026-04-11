@@ -6,7 +6,8 @@ const driver = neo4j.driver(
   process.env.NEO4J_URI,
   neo4j.auth.basic(process.env.NEO4J_USER, process.env.NEO4J_PASSWORD),
   { 
-    encrypted: 'ENCRYPTION_OFF' // 
+    encrypted: process.env.NEO4J_URI.startsWith('neo4j+s') ? 'ENCRYPTION_ON' : 'ENCRYPTION_OFF',
+    trust: 'TRUST_SYSTEM_CA_SIGNED_CERTIFICATES'
   }
 );
 
