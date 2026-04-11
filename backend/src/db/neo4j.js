@@ -2,13 +2,10 @@ const neo4j = require('neo4j-driver');
 require('dotenv').config();
 
 // Create a driver instance
+// For Neo4j Aura, the +s in 'neo4j+s://' handles encryption automatically.
 const driver = neo4j.driver(
   process.env.NEO4J_URI,
-  neo4j.auth.basic(process.env.NEO4J_USER, process.env.NEO4J_PASSWORD),
-  { 
-    encrypted: process.env.NEO4J_URI.startsWith('neo4j+s') ? 'ENCRYPTION_ON' : 'ENCRYPTION_OFF',
-    trust: 'TRUST_SYSTEM_CA_SIGNED_CERTIFICATES'
-  }
+  neo4j.auth.basic(process.env.NEO4J_USER, process.env.NEO4J_PASSWORD)
 );
 
 // Verify the connection
