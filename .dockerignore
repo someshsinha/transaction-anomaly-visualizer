@@ -1,0 +1,28 @@
+# Dependency folders
+node_modules/
+**/node_modules/
+
+# Local env files
+.env
+**/.env
+
+# Build artifacts
+dist/
+build/
+.next/
+
+# IDE files
+.vscode/
+.idea/
+
+# Git folder
+.git/
+
+# Ignore frontend files when building backend
+dashboard/
+
+# Other unnecessary files
+*.md
+LICENSE
+docker-compose.yml
+sample*.png
