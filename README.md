@@ -11,17 +11,18 @@
 
 ## 🚀 Live Access
 
-**[👉 View Live Dashboard](https://transaction-anomaly-visualizer-dash.vercel.app/)**
+👉 [View Live Dashboard](https://transaction-anomaly-visualizer-dash.vercel.app)
 
-> **Note:** This project uses Render's free tier. The first request may take **30–50 seconds** to complete as the backend services wake up.
->
-> To explore the live network visualization immediately, follow these simple steps:
+> 💡 **Note:** This project uses Render's free tier. The first request may take 30–50 seconds to complete as the backend services wake up from their sleep cycle.
+
+### ⏱️ 30-Second Quick Start Guide
+
+To explore the live network visualization immediately, follow these simple steps:
 
 1. **Download Sample Data:** Click the tiny **`Sample CSV`** link located right under the `Ingest CSV` button on the top right of the dashboard navigation bar.
 2. **Upload & Process:** Click the main **`Ingest CSV`** button, select the downloaded `sample.csv` file, and upload it to trigger the background processing queues.
 3. **Analyze the Batch:** Enter your generated batch ID into the **`JOB ID`** input field at the top and click **`Analyze`** to populate the prioritized real-time **Anomaly Feed** on the right panel.
 4. **Visualize the Subgraph Network:** Copy any suspicious account ID flagged in the feed (for example, `C764826684`), paste it into the **`ACCOUNT`** input field on the top left, and click **`Graph`** to instantly render the multi-hop transaction cycle visually.
-
 ---
 
 ## 🏗️ System Architecture
